@@ -43,4 +43,6 @@ Add `Playwright` tests for new functionalities to at least test for regression o
 
 # Deployment
 
-The main-branch is automatically deployed to https://vedenlaatu-kartalla.netlify.app/
+The main-branch is automatically deployed using Google Cloud Build to Google App Engine serving at https://pivetodatademo.appspot.com.
+
+PR Preview branches are deployed Netlify.
