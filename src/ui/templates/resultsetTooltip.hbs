@@ -1,0 +1,11 @@
+<div class='min-w-[140px]'>
+  <p class='mb-1.5 font-semibold text-gray-900'>{{resultSetLabel}}</p>
+  <dl class='space-y-1'>
+    {{#each otherAttributes}}
+      <div class='flex justify-between gap-3'>
+        <dt class='text-xs text-gray-500'>{{name}}</dt>
+        <dd class='text-xs font-medium text-gray-800'>{{value}}</dd>
+      </div>
+    {{/each}}
+  </dl>
+</div>

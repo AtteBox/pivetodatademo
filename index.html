@@ -1,0 +1,135 @@
+<!doctype html>
+<html class="h-full w-full">
+<!--
+Copyright (c) 2014-2026 Atte Virtanen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+    content="Karttakäyttöliittymä pintavedenlaadun mittaustulosten selaamiseen. Aineisto haetaan avoimen rajapinnan avulla SYKEn ylläpitämästä pintavesien tilan tietojärjestelmästä." />
+  <meta name="keywords"
+    content="karttakäyttöliittymä,PIVET,vedenlaatu,pintavesien tila,kartta,kartalla,vedenlaatutiedot,pintavedet" />
+  <meta name="author" content="Atte Virtanen" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Vedenlaatu kartalla</title>
+  <link rel="stylesheet" href="./index.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js"
+    integrity="sha512-eO1AKNIv7KSFl5n81oHCKnYLMi8UV4wWD1TcLYKNTssoECDuiGhoRsQkdiZkl8VUjoms2SeJY7zTSw5noGSqbQ=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.min.js"
+    integrity="sha512-lcRowrkiQvFli9HkuJ2Yr58iEwAtzhFNJ1Galsko4SJDhcZfUub8UxGlMQIsMvARiTqx2pm7g6COxJozihOixA=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.errorbars.min.js"
+    integrity="sha512-GFyMPfWanT6EOyIUmuGoITp14i1r+JjSTdvyz5N9YWx5M8AoOpfXC0lqug/PyH5ZwpKzRV4RrFtlqsYrdeM+Aw=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.min.js"
+    integrity="sha512-3EUG0t3qfbLaGN3FXO86i+57nvxHOXvIb/xMSKRrCuX/HXdn1bkbqwAeLd6U1PDmuEB2cnKhfM+SGLAVQbyjWQ=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.min.js"
+    integrity="sha512-K6hQwrmY3uoyAKacLcTWHjbO8iUqWqSlwO7UdBeDrNGsSkG35mdjY8IKLCZYJSo4Ko7GcGliR4oWcsQPOgddAg=="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.resize.min.js"
+    integrity="sha512-9zhTD6cZrwSp3aSDtC2dM9RPiRylLkHphz2DcBPElrql8QK/WVg3iHl2yC/imytI9BpKFzvzHzYHDM/8K9GPeA=="
+    crossorigin="anonymous"></script>
+  <script type="module" src="/src/main.ts"></script>
+</head>
+
+<body class="h-full w-full">
+  <div id="doc" class="relative h-full w-full overflow-auto">
+    <div id="map-canvas" class="z-[1] h-full w-full"></div>
+    <div id="map-info"
+      class="absolute left-1/2 top-3 z-[2] -translate-x-1/2 transform rounded-xl bg-white/85 px-5 py-3 text-center shadow-lg backdrop-blur-sm transition-opacity duration-300">
+      <div class="flex items-center gap-2">
+        <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8 7 4 10.5 4 14a8 8 0 1016 0c0-3.5-4-7-8-12z" />
+        </svg>
+        <span class="text-sm font-semibold text-gray-800">Vedenlaatu kartalla</span>
+      </div>
+      <div class="mt-1.5 text-xs text-gray-500">
+        <a href="https://www.syke.fi/fi/ymparistotieto/avoimet-rajapinnat/ymparistotiedon-rajapinnat#pintaveden-laatutietojen-rajapinta"
+          class="text-blue-600 transition-colors hover:text-blue-800 hover:underline">Syken rajapinnat</a>
+        &middot; Atte Virtanen
+      </div>
+    </div>
+    <div id="map-layers-not-seen-message"
+      class="pointer-events-none absolute bottom-4 left-1/2 z-[2] -translate-x-1/2 transform rounded-xl bg-white/90 px-5 py-3 text-center text-sm text-gray-700 shadow-lg backdrop-blur-sm transition-opacity duration-300">
+    </div>
+  </div>
+  <div id="map-loader"
+    class="pointer-events-none absolute bottom-4 left-1/2 z-[2] hidden -translate-x-1/2 transform rounded-xl bg-white/90 px-5 py-3 text-center text-sm text-gray-600 shadow-lg backdrop-blur-sm">
+    <span class="inline-flex items-center gap-2">
+      <svg class="h-4 w-4 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Haetaan kohteita kartalle...
+    </span>
+  </div>
+  <div id="popup-window"
+    class="popup-window-overlay fixed inset-0 z-[3] overflow-y-auto bg-black/40 outline-none backdrop-blur-[2px]"
+    tabindex="-1" aria-modal="true" role="dialog">
+    <div
+      class="pointer-events-none relative mx-auto max-h-screen w-auto max-w-[860px] max-[575px]:m-0 min-[576px]:mt-6 min-[576px]:px-4 min-[1200px]:max-w-[1140px]">
+      <div
+        class="pointer-events-auto relative flex w-full min-w-[320px] flex-col rounded-xl border-none bg-white bg-clip-padding text-current shadow-2xl outline-none max-[575px]:rounded-none">
+        <div class="flex items-center justify-between rounded-t-xl max-[575px]:h-screen max-[575px]:rounded-none">
+          <div id="popup-window-content" class="flex-1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip"
+    class="absolute z-[4] hidden max-w-xs rounded-lg border border-gray-200 bg-white/95 p-2.5 text-xs shadow-xl backdrop-blur-sm">
+  </div>
+  <div id="popup-window-loader"
+    class="fixed left-1/2 top-1/2 z-[5] hidden -translate-x-1/2 -translate-y-1/2 transform rounded-xl bg-white px-6 py-4 text-center text-sm text-gray-600 shadow-2xl">
+    <span class="inline-flex items-center gap-2">
+      <svg class="h-5 w-5 animate-spin text-blue-600" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      Haetaan tietoa...
+    </span>
+  </div>
+  <div id="error-window" class="fixed bottom-0 z-[5] hidden w-full text-center">
+    <div
+      class="flex items-center justify-center gap-3 border-t-4 border-red-500 bg-red-50/95 px-6 py-4 text-red-800 shadow-lg backdrop-blur-sm"
+      role="alert">
+      <svg class="h-5 w-5 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+      </svg>
+      <div>
+        <p class="font-semibold">Virhe tapahtui</p>
+        <p class="text-xs text-red-600">
+          Sovelluksessa tapahtui odottamaton virhe. Kokeile toimintoa myöhemmin uudelleen.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

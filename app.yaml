@@ -1,0 +1,26 @@
+runtime: python312
+
+handlers:
+  # Root URL → index.html
+  - url: /
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+
+  # Vite hashed assets — long cache is safe
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+    expiration: "365d"
+
+  # Other static files in dist/ (favicon, etc.)
+  - url: /(.*)
+    static_files: dist/\1
+    upload: dist/(.*)
+    secure: always
+
+  # SPA fallback — serve index.html for unmatched routes
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
