@@ -1,0 +1,15 @@
+steps:
+  - name: 'node:lts'
+    entrypoint: 'npm'
+    args: ['ci']
+
+  - name: 'node:lts'
+    entrypoint: 'npm'
+    args: ['run', 'build']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['app', 'deploy', '--quiet']
+
+options:
+  logging: CLOUD_LOGGING_ONLY

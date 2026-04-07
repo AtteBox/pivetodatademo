@@ -1,0 +1,23 @@
+<div class='min-w-[160px]'>
+  <p class='mb-1.5 font-semibold text-gray-900'>{{resultSetLabel}}</p>
+  <dl class='space-y-1'>
+    <div class='flex justify-between gap-3'>
+      <dt class='text-[0.7rem] text-gray-500'>Aika</dt>
+      <dd class='text-[0.7rem] font-medium text-gray-800'>{{date}}</dd>
+    </div>
+    <div class='flex justify-between gap-3'>
+      <dt class='text-[0.7rem] text-gray-500'>Arvo</dt>
+      <dd class='text-[0.7rem] font-medium text-gray-800'>{{value}} {{unit}}</dd>
+    </div>
+    <div class='flex justify-between gap-3'>
+      <dt class='text-[0.7rem] text-gray-500'>Epävarmuus</dt>
+      <dd class='text-[0.7rem] font-medium text-gray-800'>{{measUnc}}</dd>
+    </div>
+    {{#each otherAttributes}}
+      <div class='flex justify-between gap-3'>
+        <dt class='text-[0.7rem] text-gray-500'>{{name}}</dt>
+        <dd class='text-[0.7rem] font-medium text-gray-800'>{{value}}</dd>
+      </div>
+    {{/each}}
+  </dl>
+</div>
