@@ -9,7 +9,8 @@
           disabled
           class='tab-button tab-button-active'
           id='site-info-menu-show-site-info'
-        >Paikan tiedot</button>
+          data-testid='tab-site-info'
+        >{{t 'popup.tab.siteInfo'}}</button>
       </li>
       <li role='presentation'>
         <button
@@ -17,7 +18,8 @@
           aria-selected='false'
           id='site-info-menu-show-results'
           class='tab-button'
-        >Paikan tulokset</button>
+          data-testid='tab-results'
+        >{{t 'popup.tab.results'}}</button>
       </li>
     </ul>
   </nav>

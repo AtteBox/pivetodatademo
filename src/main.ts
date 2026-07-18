@@ -1,22 +1,28 @@
 import { MarkerSymbol, Coord, SitesMapLayer, LeafletRenderer } from './map';
 import { pivet } from './datasource';
+import { applyDomTranslations, getLocale, pickByLocale, resolveLocale, setLocale, t } from './i18n';
 import { MapUI, LayerwiseUI, ResultBrowser } from './ui';
 
 const navigator = (globalThis as any).navigator;
+const document = (globalThis as any).document;
 
 $(function () {
+  setLocale(resolveLocale());
+  document.documentElement.lang = getLocale();
+  document.title = t('app.title');
+  applyDomTranslations(document);
+
   // this is needed, because the popu must be shown at page load for flot etc to work properly
   $('#popup-window').hide();
   const init = function (lat: number, lon: number, zoom: number) {
     const leafletRenderer = new LeafletRenderer(new Coord(lat, lon), zoom, 'map-canvas');
     const mapUi = new MapUI();
 
-    const lang = 'fi';
     const pivetUi = new LayerwiseUI(
       mapUi,
-      pivet.siteAttributeNameToUIName[lang],
-      pivet.resultSetAttributeNameToUIName[lang],
-      pivet.resultAttributeNameToUIName[lang],
+      pickByLocale(pivet.siteAttributeNameToUIName),
+      pickByLocale(pivet.resultSetAttributeNameToUIName),
+      pickByLocale(pivet.resultAttributeNameToUIName),
       true,
     );
     const pivetMarkerSymbol = new MarkerSymbol('img/ImageMarker.png', 18, 19, 9, 9);
@@ -27,7 +33,7 @@ $(function () {
       mapUi,
       pivet.ResultSetListQuery,
       pivet.SiteInfoQuery,
-      'vedenlaatu PIVET',
+      t('layer.pivetName'),
     );
   };
   const defaultFin = function () {
