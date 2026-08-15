@@ -31,6 +31,7 @@ export class Chart extends ChartEvents implements IChart {
     _legendDivId?: string | null,
     _margin_Percentage?: number,
     _halfWidthIfOneResult_Milliseconds?: number,
+    timeAxisMonthNames?: string[],
   ) {
     super();
     const legendDivId = _legendDivId ?? null;
@@ -63,6 +64,7 @@ export class Chart extends ChartEvents implements IChart {
       xaxis: {
         mode: 'time',
         timezone: 'browser',
+        monthNames: timeAxisMonthNames ?? null,
         min: this.#initialExtent.minx,
         max: this.#initialExtent.maxx,
       },
@@ -357,6 +359,7 @@ type IFlotOptions = {
   xaxis: {
     mode: 'time';
     timezone: 'browser';
+    monthNames: string[] | null;
     min: number;
     max: number;
   };
