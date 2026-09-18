@@ -1,5 +1,8 @@
 import { test, Page } from '@playwright/test';
 
+import { resultAttributeNameToUIName } from '../src/datasource/pivetLabels';
+import { resources } from '../src/i18n/resources';
+
 test('should draw graph', async ({ page }) => {
   await arrangeResultsShown(page);
   await page.click('#charts-result-set-button_0');
@@ -12,7 +15,7 @@ test('should show analyte tooltip', async ({ page }) => {
   await arrangeResultsShown(page);
   await page.locator('#charts-result-set-button_0').hover();
   const tooltip = await page.waitForSelector('#tooltip');
-  tooltip.waitForSelector('text=Analyyttitunnus');
+  tooltip.waitForSelector('text=' + resultAttributeNameToUIName.fi.AnalyteCode);
 });
 
 test('should show result tooltip', async ({ page }) => {
@@ -27,7 +30,7 @@ test('should show result tooltip', async ({ page }) => {
   await hoverFirstNonBgPixel(page);
   await page.waitForTimeout(500);
   const tooltip = await page.waitForSelector('#tooltip');
-  tooltip.waitForSelector('text=Arvo');
+  tooltip.waitForSelector('text=' + resources.fi['tooltip.value']);
 });
 
 // TODO: test for selection zooming graph
@@ -36,8 +39,8 @@ test('should show result tooltip', async ({ page }) => {
 async function arrangeResultsShown(page) {
   await page.goto('/');
 
-  while (await page.isVisible('text=Siirry lähemmäksi')) {
-    await page.click('text=+');
+  while (await page.isVisible('[data-testid="layers-not-seen-message"]')) {
+    await page.click('.leaflet-control-zoom-in');
   }
 
   await page.waitForSelector('img[alt="Marker"]');
@@ -45,8 +48,8 @@ async function arrangeResultsShown(page) {
   await page.$$eval('img[alt="Marker"]', (markers) => {
     markers[0].click();
   });
-  await page.waitForSelector('text=Paikan tiedot');
-  await page.click('text=Paikan tulokset');
+  await page.waitForSelector('[data-testid="tab-site-info"]');
+  await page.click('[data-testid="tab-results"]');
 }
 
 // Function to execute in the browser context

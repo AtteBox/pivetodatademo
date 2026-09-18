@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="h-full w-full">
+<html lang="fi" class="h-full w-full">
 <!--
 Copyright (c) 2014-2026 Atte Virtanen
 
@@ -64,11 +64,11 @@ SOFTWARE.
         <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C8 7 4 10.5 4 14a8 8 0 1016 0c0-3.5-4-7-8-12z" />
         </svg>
-        <span class="text-sm font-semibold text-gray-800">Vedenlaatu kartalla</span>
+        <span class="text-sm font-semibold text-gray-800" data-i18n="app.title">Vedenlaatu kartalla</span>
       </div>
       <div class="mt-1.5 text-xs text-gray-500">
         <a href="https://www.syke.fi/fi/ymparistotieto/avoimet-rajapinnat/ymparistotiedon-rajapinnat#pintaveden-laatutietojen-rajapinta"
-          class="text-blue-600 transition-colors hover:text-blue-800 hover:underline">Syken rajapinnat</a>
+          class="text-blue-600 transition-colors hover:text-blue-800 hover:underline" data-i18n="app.sykeApisLink">Syken rajapinnat</a>
         &middot; Atte Virtanen
       </div>
     </div>
@@ -83,7 +83,7 @@ SOFTWARE.
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
       </svg>
-      Haetaan kohteita kartalle...
+      <span data-i18n="map.loadingSites">Haetaan kohteita kartalle...</span>
     </span>
   </div>
   <div id="popup-window"
@@ -110,7 +110,7 @@ SOFTWARE.
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
       </svg>
-      Haetaan tietoa...
+      <span data-i18n="popup.loading">Haetaan tietoa...</span>
     </span>
   </div>
   <div id="error-window" class="fixed bottom-0 z-[5] hidden w-full text-center">
@@ -123,8 +123,8 @@ SOFTWARE.
           d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
       </svg>
       <div>
-        <p class="font-semibold">Virhe tapahtui</p>
-        <p class="text-xs text-red-600">
+        <p class="font-semibold" data-i18n="error.title">Virhe tapahtui</p>
+        <p class="text-xs text-red-600" data-i18n="error.body">
           Sovelluksessa tapahtui odottamaton virhe. Kokeile toimintoa myöhemmin uudelleen.
         </p>
       </div>

@@ -14,7 +14,7 @@
   </svg>
   <div>
     {{#each layerNamesNotSeen}}
-      <span>Siirry lähemmäksi nähdäksesi {{this}} kohteet</span>
+      <span data-testid='layers-not-seen-message'>{{t 'map.zoomCloserToSee' layerName=this}}</span>
     {{/each}}
   </div>
 </div>

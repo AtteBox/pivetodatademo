@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import { AppEvent } from '../core';
 import { Chart, IResultSetQuery, Result } from '../chart';
+import { formatDateTime, getMonthShortNames } from '../i18n';
 import { renderTemplate } from './common';
 import { ISiteInfo } from '../siteInfo';
 import { IMapUI } from './MapUI';
@@ -101,7 +102,7 @@ export class LayerwiseUI extends LayerwiseUIEvents {
     );
     const html = renderTemplate(resultTooltip, {
       otherAttributes: otherAttributes,
-      date: result.getDate(),
+      date: formatDateTime(result.getDate()),
       value: result.getValue(),
       measUnc: result.getMeasUnc(),
       resultSetLabel: resultHoverInfo.resultSet.getLabel(),
@@ -154,7 +155,13 @@ export class LayerwiseUI extends LayerwiseUIEvents {
     });
     this.#mapUI.showPopupWindow(html);
 
-    const charts = new Chart('flot-charts-placeholder', 'flot-charts-legend-placeholder');
+    const charts = new Chart(
+      'flot-charts-placeholder',
+      'flot-charts-legend-placeholder',
+      undefined,
+      undefined,
+      getMonthShortNames(),
+    );
     charts.errorEvent.addListener((err) => this.errorEvent.trigger(err));
     charts.startLoadingDataEvent.addListener(this.#mapUI.startPopupLoadingIndicator.bind(this.#mapUI));
     charts.endLoadingDataEvent.addListener(this.#mapUI.endPopupLoadingIndicator.bind(this.#mapUI));
