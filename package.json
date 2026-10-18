@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "flot": "3.2",
-    "handlebars": "^4.7.9",
+    "handlebars": "^4.7.10",
     "jquery": "^3.7.1",
     "leaflet": "^1.9.4"
   }
