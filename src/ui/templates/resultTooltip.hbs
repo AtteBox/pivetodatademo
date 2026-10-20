@@ -2,15 +2,15 @@
   <p class='mb-1.5 font-semibold text-gray-900'>{{resultSetLabel}}</p>
   <dl class='space-y-1'>
     <div class='flex justify-between gap-3'>
-      <dt class='text-[0.7rem] text-gray-500'>Aika</dt>
+      <dt class='text-[0.7rem] text-gray-500'>{{t 'tooltip.time'}}</dt>
       <dd class='text-[0.7rem] font-medium text-gray-800'>{{date}}</dd>
     </div>
     <div class='flex justify-between gap-3'>
-      <dt class='text-[0.7rem] text-gray-500'>Arvo</dt>
+      <dt class='text-[0.7rem] text-gray-500'>{{t 'tooltip.value'}}</dt>
       <dd class='text-[0.7rem] font-medium text-gray-800'>{{value}} {{unit}}</dd>
     </div>
     <div class='flex justify-between gap-3'>
-      <dt class='text-[0.7rem] text-gray-500'>Epävarmuus</dt>
+      <dt class='text-[0.7rem] text-gray-500'>{{t 'tooltip.uncertainty'}}</dt>
       <dd class='text-[0.7rem] font-medium text-gray-800'>{{measUnc}}</dd>
     </div>
     {{#each otherAttributes}}

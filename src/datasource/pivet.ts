@@ -1,70 +1,13 @@
 import { AppEvent, DataQuery, IDataQuery } from '../core';
+import { DEFAULT_LOCALE, t } from '../i18n';
 import { Coord, ISitesQuery, Site, Extent } from '../map';
 import { IResultSetQuery, IResultSetListQuery, Result } from '../chart';
 import { ISiteInfo, ISiteInfoQuery } from '../siteInfo';
+import { siteAttributeNameToUIName } from './pivetLabels';
+
+export { siteAttributeNameToUIName, resultAttributeNameToUIName, resultSetAttributeNameToUIName } from './pivetLabels';
 
 const pivetServiceUri = 'https://rajapinnat.ymparisto.fi/api/vesla/2.0/odata/';
-
-type ITextResourceMappingsByLanguage = {
-  [language: string]: {
-    [key: string]: string;
-  };
-};
-
-export const siteAttributeNameToUIName: ITextResourceMappingsByLanguage = {
-  fi: {
-    Name: 'Nimi',
-    Site_Id: 'Paikan ID',
-    CoordinateSystem: 'Syötetty koordinaatisto',
-    CoordETRSTM35FIN_North: 'Pohj-koordinaatti (ETRS-TM35FIN)',
-    CoordETRSTM35FIN_East: 'Itä-koordinaatti (ETRS-TM35FIN)',
-    CoordEUREFFIN_WGS84_Lat: 'Leveysaste (EUREF-FIN/WGS84)',
-    CoordEUREFFIN_WGS84_Long: 'Pituusaste (EUREF-FIN/WGS84)',
-    Depth_m: 'Syvyys (m)',
-    EnvironmentType: 'Ympäristötyyppi',
-    Municipal: 'Kunta',
-    LakeCode: 'Järvitunnus',
-    Lake: 'Järvi',
-    WaterManagementAreaCode: 'Vesienhoitoalueen tunnus',
-    WaterManagementArea: 'Vesienhoitoalueen nimi',
-    WaterbasinCode: 'Valuma-alueen tunnus',
-    Waterbasin: 'Valuma-alueen nimi',
-    WaterbodyCode: 'Vesimuodostuman tunnus',
-    Waterbody: 'Vesimuodostuman nimi',
-    DateAdded: 'Lisätty pvm.',
-    SiteRadius_m: 'Paikan säde',
-    HelcomSubbasinCode: 'Helcom alue (koodi)',
-    HelcomSubbasin: 'Helcom alue',
-    HelcomCoastalAreaCode: 'Helcom rannikkoalue (koodi)',
-    HelcomCoastalArea: 'Helcom rannikkoalue',
-  },
-};
-
-export const resultAttributeNameToUIName: ITextResourceMappingsByLanguage = {
-  fi: {
-    Sampling_id: 'Näytteenoton ID',
-    SampleDepth_m: 'Syvyys (m)',
-    SampleDepthUpper_m: 'Syvyys ylhäällä (m)',
-    SampleDepthLower_m: 'Syvyys alhaalla (m)',
-    Sample_Id: 'Näytteen ID',
-    Determination_Id: 'Määritysm. ID',
-    Flag: 'Lippu',
-    AnalyteCode: 'Analyyttitunnus',
-    AnalyteNameFI: 'Analyytin nimi',
-    DeterminationCode: 'Määritysm. tunnus',
-    DeterminationNameFI: 'Määritysm. nimi',
-  },
-};
-
-export const resultSetAttributeNameToUIName: ITextResourceMappingsByLanguage = {
-  fi: {
-    AnalyteNameFI: 'Analyytin nimi',
-    AnalyteCode: 'Analyyttitunnus',
-    SampleDepthUpper_m: 'Syvyys ylhäällä (m)',
-    SampleDepthLower_m: 'Syvyys alhaalla (m)',
-    Unit: 'Yksikkö',
-  },
-};
 
 export class SitesQuery extends DataQuery<Site[]> implements ISitesQuery {
   #extent: Extent;
@@ -225,7 +168,10 @@ export class ResultSetQuery extends DataQuery<Result[]> implements IResultSetQue
   }
 
   getLabel() {
-    return `${this.#analyteCode.trim()} ${this.#unit != null && this.#unit !== '' ? `(${this.#unit})` : ''} syv. ${this.#upperDepth}${this.#lowerDepth !== null ? ' - ' + this.#lowerDepth : ''} m`;
+    // The label is also used as the result set's identity (Chart.hasResultSet,
+    // ResultSetListQuery.getResultSetByLabel). Localizing it is safe only
+    // because the locale is fixed for the lifetime of the page.
+    return `${this.#analyteCode.trim()} ${this.#unit != null && this.#unit !== '' ? `(${this.#unit})` : ''} ${t('resultSet.depthAbbr')} ${this.#upperDepth}${this.#lowerDepth !== null ? ' - ' + this.#lowerDepth : ''} m`;
   }
 
   getInfoObj() {
@@ -353,8 +299,9 @@ export class SiteInfoQuery extends DataQuery<ISiteInfo> implements ISiteInfoQuer
         if (data['value'].length < 1) {
           this.siteInfoSearchFailedEvent.trigger('Site with id ' + this.#siteId + ' not found');
         } else {
-          // pick only the fields that are in the siteAttributeNameToUIName.fi and Site_Id:
-          const selectedFields = new Set([...Object.keys(siteAttributeNameToUIName.fi), 'Site_Id']);
+          // pick only the fields that have a UI name mapping and Site_Id
+          // (the keys are the same in every language, so any locale's mapping works):
+          const selectedFields = new Set([...Object.keys(siteAttributeNameToUIName[DEFAULT_LOCALE]), 'Site_Id']);
           const selectedSiteData = Object.entries(data['value'][0]).reduce<Partial<ISiteInfo>>((acc, [key, value]) => {
             if (selectedFields.has(key)) {
               acc[key] = value;
